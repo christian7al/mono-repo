@@ -1,0 +1,25 @@
+# Base image
+FROM node:18-alpine as base
+
+WORKDIR /app
+
+# Copy root package.json and yarn.lock
+COPY package.json yarn.lock nx.json ./
+COPY tsconfig.base.json ./
+COPY .eslintrc.json ./
+COPY jest.preset.js ./
+
+# Copy all project files (apps and libs)
+COPY apps ./apps
+COPY libs ./libs
+
+# Install dependencies
+RUN yarn install
+
+RUN yarn nx reset
+
+# Expose the port the app runs on
+EXPOSE 3000
+
+# Command to run the application in development mode
+CMD ["yarn", "serve:backend:dev"]
